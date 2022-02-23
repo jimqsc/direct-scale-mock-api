@@ -3,7 +3,9 @@ import express from 'express'
 const app = express()
 const port = 3000
 
-let numRequestToValidateUsername = 0
+let numRequestsToValidateUsername = 0
+let numRequestsToCreateCustomer = 0
+const RequestCountTilSuccess = 3;
 
 const getRandomInt = ():number => {
 	return Math.floor(Math.random() * 2147483647)
@@ -15,10 +17,10 @@ app.get('/', (req, res) => {
 
 app.get('/v1/validate/availability-check/usernames/:username', (req, res) => {
 	const params = req.params
-	numRequestToValidateUsername++
+	numRequestsToValidateUsername++
 
-	if (numRequestToValidateUsername < 2) {
-		res.status(500).end();
+	if (numRequestsToValidateUsername < RequestCountTilSuccess) {
+		res.status(500).end()
 	}
 	else {
 		res.status(200).send('true')
@@ -27,8 +29,15 @@ app.get('/v1/validate/availability-check/usernames/:username', (req, res) => {
 
 app.post('/v1/customers/', (req, res) => {
 	const params = req.params
-	const associateId = getRandomInt().toString()
-	res.status(201).send(associateId)
+	numRequestsToCreateCustomer++
+
+	if (numRequestsToCreateCustomer < RequestCountTilSuccess) {
+		res.status(500).end()
+	}
+	else {
+		const associateId = getRandomInt().toString()
+		res.status(201).send(associateId)
+	}
 })
 
 app.listen(port, () => {
