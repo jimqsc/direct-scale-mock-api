@@ -40,6 +40,12 @@ app.post('/v1/customers/', (req, res) => {
 	}
 })
 
+app.get('/reset', (req, res) => {
+	numRequestsToValidateUsername = 0
+	numRequestsToCreateCustomer = 0
+	res.status(200).send('reset done.')
+})
+
 app.listen(port, () => {
 	console.log(`running on port ${port}`)
 })
