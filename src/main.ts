@@ -1,11 +1,14 @@
 import express from 'express'
+import { v4 as uuid } from 'uuid'
 
 const app = express()
 const port = 3000
 
 let numRequestsToValidateUsername = 0
 let numRequestsToCreateCustomer = 0
-const RequestCountTilSuccess = 3;
+const RequestCountTilSuccess = 2;
+const DirectScaleRequestIdResponseHeader = "X-DirectScale-RequestId"
+const DirectScaleMessageResponseHeader = "X-DirectScale-Message"
 
 const getRandomInt = ():number => {
 	return Math.floor(Math.random() * 2147483647)
@@ -20,6 +23,8 @@ app.get('/v1/validate/availability-check/usernames/:username', (req, res) => {
 	numRequestsToValidateUsername++
 
 	if (numRequestsToValidateUsername < RequestCountTilSuccess) {
+		res.set(DirectScaleRequestIdResponseHeader, uuid())
+		res.set(DirectScaleMessageResponseHeader, 'unknown error occurred')
 		res.status(500).end()
 	}
 	else {
@@ -32,6 +37,8 @@ app.post('/v1/customers/', (req, res) => {
 	numRequestsToCreateCustomer++
 
 	if (numRequestsToCreateCustomer < RequestCountTilSuccess) {
+		res.set(DirectScaleRequestIdResponseHeader, uuid())
+		res.set(DirectScaleMessageResponseHeader, 'unknown error occurred')
 		res.status(500).end()
 	}
 	else {
